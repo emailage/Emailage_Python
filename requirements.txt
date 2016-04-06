@@ -1,1 +1,2 @@
-testpackage == 2.26
+requests >= 2.9
+mock >= 2.0
