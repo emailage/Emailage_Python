@@ -1,0 +1,14 @@
+site_name: emailage
+site_description: Emailage API client written in Python
+site_author: Sergey Baev
+repo_url: https://github.com/emailage/Emailage_Python
+# google_analytics: ['XX-XXXXXXXX-XX', 'auto']
+
+theme: mkdocs
+
+pages:
+- Home: index.md
+- About:
+  - 'Release Notes': about/changes.md
+  - Contributing: about/contributing.md
+  - License: about/license.md
