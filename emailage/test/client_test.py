@@ -66,13 +66,18 @@ class ClientFlagTest(ClientTest):
         self.subj.flag_as_fraud(self.email, 3)
         
         self.r.assert_called_once_with('/flag', flag='fraud', query='test+emailage@example.com', fraudcodeID=3)
+
+    def test_flag_as_fraud__call2(self):
+        """Flags a supplied address as fraud with fraud code = 9 if the code is an integer but out of range"""
+        self.subj.flag_as_fraud(self.email, 42)
+        
+        self.r.assert_called_once_with('/flag', flag='fraud', query='test+emailage@example.com', fraudcodeID=9)
             
     def test_flag_as_fraud__exceptions(self):
         """Raises an error when none, unknown or string fraud code is supplied"""
         self.assertRaises(TypeError, self.subj.flag_as_fraud, self.email)
         self.assertRaises(ValueError, self.subj.flag_as_fraud, self.email, 'Blah blah')
         self.assertRaises(ValueError, self.subj.flag_as_fraud, self.email, 'First Party Fraud')
-        self.assertRaises(ValueError, self.subj.flag_as_fraud, self.email, 42)
     
     def test_flag_as_good(self):
         """Flags a supplied address as good"""

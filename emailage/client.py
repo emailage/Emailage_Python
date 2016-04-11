@@ -137,8 +137,11 @@ class EmailageClient:
         params = dict(flag=flag, query=query)
 
         if flag == 'fraud':
-            if fraud_code not in range(1, 9):
-                raise ValueError("fraud_code must be an integer from 1 to 9 corresponding to {}. {} is given.".format(', '.join(self.FRAUD_CODES.values()), fraud_code))
+            codes = self.FRAUD_CODES
+            if type(fraud_code) is not int:
+                raise ValueError("fraud_code must be an integer from 1 to {} corresponding to {}. {} is given.".format(len(codes), ', '.join(codes.values()), fraud_code))
+            if fraud_code not in range(1, len(codes) + 1):
+                fraud_code = 9
             params['fraudcodeID'] = fraud_code
 
         return self.request('/flag', **params)
