@@ -1,10 +1,14 @@
 """OAuth1 module written according to http://oauth.net/core/1.0/#signing_process"""
 
-import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
+
 from uuid import uuid4
 import json
 import time
 import re
+import ssl
 
 from emailage import signature, validation
 
@@ -22,6 +26,17 @@ class EmailageClient:
         9: 'Other'
     }
     
+    class Adapter(HTTPAdapter):
+        """Transport adapter that allows us to use TLS v1.2."""
+
+        def init_poolmanager(self, connections, maxsize, block=False):
+            self.poolmanager = PoolManager(
+                num_pools=connections,
+                maxsize=maxsize,
+                block=block,
+                ssl_version=ssl.PROTOCOL_TLSv1_2)
+                
+    
     def __init__(self, secret, token, sandbox=False):
         """Args:
             secret   (str): Consumer secret, e.g. SID or API key.
@@ -34,6 +49,10 @@ class EmailageClient:
         """
         self.secret, self.token, self.sandbox = secret, token, sandbox
         self.hmac_key = token + '&'
+        self.session = Session()
+        self.domain = 'https://{}.emailage.com'.format(self.sandbox and 'sandbox' or 'api')
+        self.session.mount(self.domain, EmailageClient.Adapter())
+        
     
     def request(self, endpoint, **params):
         """Basic request method utilized by #query and #flag.
@@ -45,8 +64,7 @@ class EmailageClient:
         Returns:
             dict: Original Emailage API's JSON body.
         """
-        base_url = 'https://{}.emailage.com/emailagevalidator'.format(self.sandbox and 'sandbox' or 'api')
-        url = base_url + endpoint + '/'
+        url = self.domain + '/emailagevalidator' + endpoint + '/'
         params = dict(
             format = 'json', 
             oauth_consumer_key = self.secret,
@@ -58,7 +76,7 @@ class EmailageClient:
         )
         params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
       
-        res = requests.get(url, params=params)
+        res = self.session.get(url, params=params)
       
         # For whatever reason Emailage dispatches JSON with unreadable symbols at the start, like \xEF\xBB\xBF.
         json_data = re.sub(r'^[^{]+', '', res.text)

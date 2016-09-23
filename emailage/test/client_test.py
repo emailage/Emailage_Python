@@ -10,12 +10,12 @@ class ClientTest(unittest.TestCase):
     def setUp(self):
         response = Mock()
         response.text = '\xEF\xBB\xBF{"success":[true]}'
-        self.g = requests.get = Mock(return_value=response)
         
         self.email = 'test+emailage@example.com'
         self.ip = '1.234.56.7'
         
         self.subj = EmailageClient('secret', 'token', sandbox=True)
+        self.g = self.subj.session.get = Mock(return_value=response)
 
     def test_is_initialized_with_properties(self):
         self.assertTrue(self.subj.sandbox)
