@@ -15,7 +15,7 @@ The Emailage&#8482; API is organized around REST (Representational State Transfe
 Emailage can be installed with pip:
 
 ```
-$ pip install emailage
+$ pip install emailage-official
 ```
 
 or directly from the source code:
