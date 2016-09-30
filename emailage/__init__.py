@@ -2,8 +2,8 @@
 
 import sys
 
-__project__ = 'emailage'
-__version__ = '2.0.0'
+__project__ = 'emailage-official'
+__version__ = '1.0.0'
 
 VERSION = "{0} v{1}".format(__project__, __version__)
 

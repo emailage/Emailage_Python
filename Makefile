@@ -1,5 +1,5 @@
 # Project settings
-PROJECT := emailage
+PROJECT := emailage-project
 PACKAGE := emailage
 SOURCES := Makefile setup.py $(shell find $(PACKAGE) -name '*.py')
 
@@ -178,7 +178,7 @@ $(DOCS_FLAG): README.rst CHANGES.rst
 .PHONY: uml
 uml: depends-doc docs/*.png
 docs/*.png: $(SOURCES)
-	$(PYREVERSE) $(PACKAGE) -p $(PACKAGE) -a 1 -f ALL -o png --ignore test
+	$(PYREVERSE) $(PACKAGE) -p $(PROJECT) -a 1 -f ALL -o png --ignore test
 	- mv -f classes_$(PACKAGE).png docs/classes.png
 	- mv -f packages_$(PACKAGE).png docs/packages.png
 
