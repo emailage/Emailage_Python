@@ -13,22 +13,27 @@ else:
     def _quote(obj):
         return urllib.parse.quote(str(obj), safe='')
 
+
 def normalize_query_parameters(params):
     """9.1.1.  Normalize Request Parameters"""
     return '&'.join(map(lambda pair: '='.join([_quote(pair[0]), _quote(pair[1])]), sorted(params.items())))
 
+
 def concatenate_request_elements(method, url, query):
     """9.1.3.  Concatenate Request Elements"""
     return '&'.join(map(_quote, [str(method).upper(), url, query]))
+
 
 def hmac_sha1(base_string, hmac_key):
     """9.2.  HMAC-SHA1"""
     hash = hmac.new(b(hmac_key), b(base_string), sha1)
     return hash.digest()
 
+
 def encode(digest):
     """9.2.1.  Generating Signature"""
     return base64.b64encode(digest).decode('ascii').rstrip('\n')
+
 
 def create(method, url, params, hmac_key):
     """Using HTTP GET parameters option.

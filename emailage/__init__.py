@@ -3,7 +3,7 @@
 import sys
 
 __project__ = 'emailage-official'
-__version__ = '1.0.1'
+__version__ = '1.0.1'  # TODO: Update - GST
 
 VERSION = "{0} v{1}".format(__project__, __version__)
 

@@ -47,3 +47,6 @@ Icon*
 
 # Eclipse
 .settings
+
+# PyCharm/IntelliJ files
+/.idea

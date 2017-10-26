@@ -35,8 +35,7 @@ class EmailageClient:
                 maxsize=maxsize,
                 block=block,
                 ssl_version=ssl.PROTOCOL_TLSv1_2)
-                
-    
+
     def __init__(self, secret, token, sandbox=False):
         """Args:
             secret   (str): Consumer secret, e.g. SID or API key.
@@ -52,7 +51,6 @@ class EmailageClient:
         self.session = Session()
         self.domain = 'https://{}.emailage.com'.format(self.sandbox and 'sandbox' or 'api')
         self.session.mount(self.domain, EmailageClient.Adapter())
-        
     
     def request(self, endpoint, **params):
         """Basic request method utilized by #query and #flag.
@@ -78,11 +76,10 @@ class EmailageClient:
       
         res = self.session.get(url, params=params)
       
-        # For whatever reason Emailage dispatches JSON with unreadable symbols at the start, like \xEF\xBB\xBF.
+        # Remove any unreadable characters from response payload
         json_data = re.sub(r'^[^{]+', '', res.text)
         return json.loads(json_data)
-    
-    
+
     def query(self, query, **params):
         """Query a risk score information for the provided email address, IP address, or a combination.
         
@@ -133,8 +130,7 @@ class EmailageClient:
         validation.assert_email(email)
         validation.assert_ip(ip)
         return self.query((email, ip), **params)
-    
-    
+
     def flag(self, flag, query, fraud_code=None):
         """Mark an email address as fraud, good, or neutral.
         
