@@ -3,6 +3,10 @@
 import re
 
 
+class Messages(object):
+    FRAUD_CODE_RANGE_FORMAT = "fraud_code must be an integer from 1 to {} corresponding to {}. {} is given."
+    FLAG_NOT_ALLOWED_FORMAT = "flag must be one of {}. {} is given."
+
 def assert_email(email):
     if not re.match(r'^[^@\s]+@([^@\s]+\.)+[^@\s]+$', email):
         raise ValueError('{} is not a valid email address.'.format(email))

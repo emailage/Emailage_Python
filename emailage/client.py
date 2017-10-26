@@ -1,16 +1,18 @@
-"""OAuth1 module written according to http://oauth.net/core/1.0/#signing_process"""
+import json
+import time
+import re
+import ssl
+from uuid import uuid4
 
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
 
-from uuid import uuid4
-import json
-import time
-import re
-import ssl
-
 from emailage import signature, validation
+
+class TlsVersions:
+    TLSv1_1 = ssl.PROTOCOL_TLSv1_1
+    TLSv1_2 = ssl.PROTOCOL_TLSv1_2
 
 
 class EmailageClient:
@@ -27,16 +29,19 @@ class EmailageClient:
     }
     
     class Adapter(HTTPAdapter):
-        """Transport adapter that allows us to use TLS v1.2."""
+        """Transport adapter that allows us to use TLS >= v1.1"""
+        def __init__(self, tls_version=TlsVersions.TLSv1_2):
+            self._tls_version = tls_version
+            super(EmailageClient.Adapter, self).__init__()
 
         def init_poolmanager(self, connections, maxsize, block=False):
             self.poolmanager = PoolManager(
                 num_pools=connections,
                 maxsize=maxsize,
                 block=block,
-                ssl_version=ssl.PROTOCOL_TLSv1_2)
+                ssl_version=self._tls_version)
 
-    def __init__(self, secret, token, sandbox=False):
+    def __init__(self, secret, token, sandbox=False, tls_version=TlsVersions.TLSv1_2):
         """Args:
             secret   (str): Consumer secret, e.g. SID or API key.
             token    (str): Consumer OAuth token.
@@ -44,13 +49,13 @@ class EmailageClient:
                 Ensure the according secret and token are supplied.
                 
         Note:
-            HMAC key is created according to Emailage docs rather than OAuth1 spec.
+            See Emailage documentation for construction of HMAC key
         """
         self.secret, self.token, self.sandbox = secret, token, sandbox
         self.hmac_key = token + '&'
         self.session = Session()
         self.domain = 'https://{}.emailage.com'.format(self.sandbox and 'sandbox' or 'api')
-        self.session.mount(self.domain, EmailageClient.Adapter())
+        self.session.mount(self.domain, EmailageClient.Adapter(tls_version))
     
     def request(self, endpoint, **params):
         """Basic request method utilized by #query and #flag.
@@ -64,12 +69,12 @@ class EmailageClient:
         """
         url = self.domain + '/emailagevalidator' + endpoint + '/'
         params = dict(
-            format = 'json', 
-            oauth_consumer_key = self.secret,
-            oauth_nonce = uuid4(),
-            oauth_signature_method = 'HMAC-SHA1',
-            oauth_timestamp = int(time.time()),
-            oauth_version = 1.0,
+            format='json',
+            oauth_consumer_key=self.secret,
+            oauth_nonce=uuid4(),
+            oauth_signature_method='HMAC-SHA1',
+            oauth_timestamp=int(time.time()),
+            oauth_version=1.0,
             **params
         )
         params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
@@ -144,7 +149,7 @@ class EmailageClient:
     
         flags = ['fraud', 'neutral', 'good']
         if flag not in flags:
-            raise ValueError("flag must be one of {}. {} is given.".format(', '.join(flags), flag))
+            raise ValueError(validation.Messages.FLAG_NOT_ALLOWED_FORMAT.format(', '.join(flags), flag))
 
         validation.assert_email(query)
         
@@ -153,7 +158,10 @@ class EmailageClient:
         if flag == 'fraud':
             codes = self.FRAUD_CODES
             if type(fraud_code) is not int:
-                raise ValueError("fraud_code must be an integer from 1 to {} corresponding to {}. {} is given.".format(len(codes), ', '.join(codes.values()), fraud_code))
+                raise ValueError(
+                    validation.Messages.FRAUD_CODE_RANGE_FORMAT.format(
+                        len(codes), ', '.join(codes.values()), fraud_code)
+                )
             if fraud_code not in range(1, len(codes) + 1):
                 fraud_code = 9
             params['fraudcodeID'] = fraud_code

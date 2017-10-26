@@ -1,7 +1,7 @@
 import unittest
 from mock import Mock
 import requests
-
+from emailage import protocols
 from emailage.client import EmailageClient
 
 
@@ -15,6 +15,7 @@ class ClientTest(unittest.TestCase):
         self.ip = '1.234.56.7'
         
         self.subj = EmailageClient('secret', 'token', sandbox=True)
+        self.subj_tls_v1_1 = EmailageClient('secret', 'token', sandbox=True, tls_version=protocols.TLSv1_1)
         self.g = self.subj.session.get = Mock(return_value=response)
 
     def test_is_initialized_with_properties(self):
