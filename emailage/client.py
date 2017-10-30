@@ -10,12 +10,15 @@ from requests.packages.urllib3.poolmanager import PoolManager
 
 from emailage import signature, validation
 
+
 class TlsVersions:
+    """An enumeration of the TLS versions supported by the Emailage API"""
     TLSv1_1 = ssl.PROTOCOL_TLSv1_1
     TLSv1_2 = ssl.PROTOCOL_TLSv1_2
 
 
 class EmailageClient:
+
     FRAUD_CODES = {
         1: 'Card Not Present Fraud',
         2: 'Customer Dispute (Chargeback)',
@@ -27,7 +30,7 @@ class EmailageClient:
         8: 'Synthetic ID',
         9: 'Other'
     }
-    
+
     class Adapter(HTTPAdapter):
         """Transport adapter that allows us to use TLS >= v1.1"""
         def __init__(self, tls_version=TlsVersions.TLSv1_2):
@@ -42,14 +45,26 @@ class EmailageClient:
                 ssl_version=self._tls_version)
 
     def __init__(self, secret, token, sandbox=False, tls_version=TlsVersions.TLSv1_2):
-        """Args:
-            secret   (str): Consumer secret, e.g. SID or API key.
-            token    (str): Consumer OAuth token.
-            sandbox (bool): Whether to use a sandbox instead of a production server.
-                Ensure the according secret and token are supplied.
-                
-        Note:
-            See Emailage documentation for construction of HMAC key
+        """ Creates an instance of the EmailageClient using the specified credentials and environment
+
+            :param secret: Consumer secret, e.g. SID or API key.
+            :param token: Consumer token.
+            :param sandbox:
+                (Optional) Whether to use a sandbox instead of a production server. Uses production by default
+            :param tls_version: (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)
+
+            :type secret: str
+            :type token: str
+            :type sandbox: bool
+            :type tls_version: see :class:`TlsVersions`
+
+            :Example:
+
+            >>> import emailage.client
+            >>> from emailage import protocols
+            >>> client = EmailageClient('consumer_secret', 'consumer_token', sandbox=True, tls_version=protocols.TLSv1_1)
+            >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
+
         """
         self.secret, self.token, self.sandbox = secret, token, sandbox
         self.hmac_key = token + '&'
@@ -97,7 +112,8 @@ class EmailageClient:
                 The identifier will be displayed in the result.
             **: Extra request params as in API documentation.
         """
-        if type(query) is tuple:   query = '+'.join(query)
+        if type(query) is tuple:
+            query = '+'.join(query)
         params['query'] = query
         return self.request('', **params)
     
@@ -144,7 +160,8 @@ class EmailageClient:
             query      (str): Email to be flagged.
             fraud_code (int): Reason why the email is considered fraud. ID of the one of FRAUD_CODES options.
                 Required only if you flag something as fraud.
-                See emailage.Client.FRAUD_CODES for the list of available reasons and their IDs.
+
+        .. seealso:: `emailage.client.EmailageClient.FRAUD_CODES` for the list of available reasons and their IDs.
         """
     
         flags = ['fraud', 'neutral', 'good']
@@ -175,7 +192,7 @@ class EmailageClient:
             query      (str): Email to be flagged.
             fraud_code (int): Reason why the email is considered fraud. ID of the one of FRAUD_CODES options.
                 Required only if you flag something as fraud.
-                See emailage.client.EmailageClient.FRAUD_CODES for the list of available reasons and their IDs.
+                See `emailage.client.EmailageClient.FRAUD_CODES` for the list of available reasons and their IDs.
         """
         return self.flag('fraud', query, fraud_code)
     

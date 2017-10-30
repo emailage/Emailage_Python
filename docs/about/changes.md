@@ -1,5 +1,6 @@
 # Revision History
 
-## 0.0.0 (YYYY/MM/DD)
+## 1.0.2 (30 October 2017)
 
- - TBD
+ - Corrected the validation of IPv4 and IPv6 IP addresses
+ - Added an optional parameter to specify TLS 1.1 or 1.2 on the initialization of EmailageClient

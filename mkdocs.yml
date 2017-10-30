@@ -1,6 +1,6 @@
 site_name: emailage
 site_description: Emailage API client written in Python
-site_author: Sergey Baev
+site_author: Emailage Dev Team
 repo_url: https://github.com/emailage/Emailage_Python
 # google_analytics: ['XX-XXXXXXXX-XX', 'auto']
 

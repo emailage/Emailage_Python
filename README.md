@@ -37,7 +37,7 @@ emailage = EmailageClient('My account SID', 'My auth token')
 emailage = EmailageClient('My account SID', 'My auth token', sandbox=True)
 ```
 
-Query a risk score information for the provided email address, IP address, or a combination
+Query risk score information for the provided email address, IP address, or a combination
 ```python
 # For an email address
 emailage.query('test@example.com')
@@ -45,7 +45,7 @@ emailage.query('test@example.com')
 emailage.query('127.0.0.1')
 # For a combination. Please note the order
 emailage.query(('test@example.com', '127.0.0.1'))
-# Pass a User Defined Record ID.
+# Pass a User Defined Record ID (URID).
 # Can be used when you want to add an identifier for a query.
 # The identifier will be displayed in the result.
 emailage.query('test@example.com', urid='My record ID for test@example.com')
@@ -89,8 +89,8 @@ emailage.remove_flag('test@example.com')
 
 ### Exceptions
 
-This gem can throw exceptions on any of the following issues:
+This client can throw exceptions on any of the following issues:
 
-1. When Requests has an issue, like not being able to connect from your server to Emailage API,
-2. When bad formatted JSON is received,
-3. When an incorrect email or IP address is passed to a flagging or explicitly querying method.
+1. When Requests has an issue, like not being able to connect from your server to the Emailage API,
+2. When incorrectly-formatted JSON is received,
+3. When an incorrectly-formatted email or IP address is passed to a flagging or explicit querying method.
