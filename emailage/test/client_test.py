@@ -1,20 +1,37 @@
+import doctest
 import unittest
 from mock import Mock
-import requests
-
+from emailage import client
+from emailage import protocols
 from emailage.client import EmailageClient
 
 
+def test_run_client_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(ClientTest())
+    suite.addTest(ClientTls11Test())
+    suite.addTest(ClientTls12Test())
+    suite.addTest(ClientTls11FlagTest())
+    suite.addTest(ClientTls12FlagTest())
+    #suite.addTests(doctest.DocTestSuite(client))
+
+
 class ClientTest(unittest.TestCase):
-    
+
+    _tls_version = None
+
     def setUp(self):
         response = Mock()
         response.text = '\xEF\xBB\xBF{"success":[true]}'
         
         self.email = 'test+emailage@example.com'
         self.ip = '1.234.56.7'
-        
-        self.subj = EmailageClient('secret', 'token', sandbox=True)
+
+        if self._tls_version is not None:
+            self.subj = EmailageClient('secret', 'token', sandbox=True, tls_version=self._tls_version)
+        else:
+            self.subj = EmailageClient('secret', 'token', sandbox=True)
+
         self.g = self.subj.session.get = Mock(return_value=response)
 
     def test_is_initialized_with_properties(self):
@@ -90,3 +107,35 @@ class ClientFlagTest(ClientTest):
         self.subj.remove_flag(self.email)
         
         self.r.assert_called_once_with('/flag', flag='neutral', query=self.email)
+
+
+class ClientTls11Test(ClientQueryTest, ClientRequestTest):
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tls_version = protocols.TLSv1_1
+
+
+class ClientTls12Test(ClientQueryTest, ClientRequestTest):
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tls_version = protocols.TLSv1_2
+
+
+class ClientTls11FlagTest(ClientFlagTest):
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tls_version = protocols.TLSv1_1
+
+
+class ClientTls12FlagTest(ClientFlagTest):
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tls_version = protocols.TLSv1_2
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,19 +1,24 @@
-"""OAuth1 module written according to http://oauth.net/core/1.0/#signing_process"""
+import json
+import time
+import re
+import ssl
+from uuid import uuid4
 
 from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
 
-from uuid import uuid4
-import json
-import time
-import re
-import ssl
-
 from emailage import signature, validation
 
 
+class TlsVersions:
+    """An enumeration of the TLS versions supported by the Emailage API"""
+    TLSv1_1 = ssl.PROTOCOL_TLSv1_1
+    TLSv1_2 = ssl.PROTOCOL_TLSv1_2
+
+
 class EmailageClient:
+
     FRAUD_CODES = {
         1: 'Card Not Present Fraud',
         2: 'Customer Dispute (Chargeback)',
@@ -25,34 +30,47 @@ class EmailageClient:
         8: 'Synthetic ID',
         9: 'Other'
     }
-    
+
     class Adapter(HTTPAdapter):
-        """Transport adapter that allows us to use TLS v1.2."""
+        """Transport adapter that allows us to use TLS >= v1.1"""
+        def __init__(self, tls_version=TlsVersions.TLSv1_2):
+            self._tls_version = tls_version
+            super(EmailageClient.Adapter, self).__init__()
 
         def init_poolmanager(self, connections, maxsize, block=False):
             self.poolmanager = PoolManager(
                 num_pools=connections,
                 maxsize=maxsize,
                 block=block,
-                ssl_version=ssl.PROTOCOL_TLSv1_2)
-                
-    
-    def __init__(self, secret, token, sandbox=False):
-        """Args:
-            secret   (str): Consumer secret, e.g. SID or API key.
-            token    (str): Consumer OAuth token.
-            sandbox (bool): Whether to use a sandbox instead of a production server.
-                Ensure the according secret and token are supplied.
-                
-        Note:
-            HMAC key is created according to Emailage docs rather than OAuth1 spec.
+                ssl_version=self._tls_version)
+
+    def __init__(self, secret, token, sandbox=False, tls_version=TlsVersions.TLSv1_2):
+        """ Creates an instance of the EmailageClient using the specified credentials and environment
+
+            :param secret: Consumer secret, e.g. SID or API key.
+            :param token: Consumer token.
+            :param sandbox:
+                (Optional) Whether to use a sandbox instead of a production server. Uses production by default
+            :param tls_version: (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)
+
+            :type secret: str
+            :type token: str
+            :type sandbox: bool
+            :type tls_version: see :class:`TlsVersions`
+
+            :Example:
+
+            >>> import emailage.client
+            >>> from emailage import protocols
+            >>> client = EmailageClient('consumer_secret', 'consumer_token', sandbox=True, tls_version=protocols.TLSv1_1)
+            >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
+
         """
         self.secret, self.token, self.sandbox = secret, token, sandbox
         self.hmac_key = token + '&'
         self.session = Session()
         self.domain = 'https://{}.emailage.com'.format(self.sandbox and 'sandbox' or 'api')
-        self.session.mount(self.domain, EmailageClient.Adapter())
-        
+        self.session.mount(self.domain, EmailageClient.Adapter(tls_version))
     
     def request(self, endpoint, **params):
         """Basic request method utilized by #query and #flag.
@@ -66,23 +84,22 @@ class EmailageClient:
         """
         url = self.domain + '/emailagevalidator' + endpoint + '/'
         params = dict(
-            format = 'json', 
-            oauth_consumer_key = self.secret,
-            oauth_nonce = uuid4(),
-            oauth_signature_method = 'HMAC-SHA1',
-            oauth_timestamp = int(time.time()),
-            oauth_version = 1.0,
+            format='json',
+            oauth_consumer_key=self.secret,
+            oauth_nonce=uuid4(),
+            oauth_signature_method='HMAC-SHA1',
+            oauth_timestamp=int(time.time()),
+            oauth_version=1.0,
             **params
         )
         params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
       
         res = self.session.get(url, params=params)
       
-        # For whatever reason Emailage dispatches JSON with unreadable symbols at the start, like \xEF\xBB\xBF.
+        # Remove any unreadable characters from response payload
         json_data = re.sub(r'^[^{]+', '', res.text)
         return json.loads(json_data)
-    
-    
+
     def query(self, query, **params):
         """Query a risk score information for the provided email address, IP address, or a combination.
         
@@ -95,7 +112,8 @@ class EmailageClient:
                 The identifier will be displayed in the result.
             **: Extra request params as in API documentation.
         """
-        if type(query) is tuple:   query = '+'.join(query)
+        if type(query) is tuple:
+            query = '+'.join(query)
         params['query'] = query
         return self.request('', **params)
     
@@ -133,8 +151,7 @@ class EmailageClient:
         validation.assert_email(email)
         validation.assert_ip(ip)
         return self.query((email, ip), **params)
-    
-    
+
     def flag(self, flag, query, fraud_code=None):
         """Mark an email address as fraud, good, or neutral.
         
@@ -143,12 +160,13 @@ class EmailageClient:
             query      (str): Email to be flagged.
             fraud_code (int): Reason why the email is considered fraud. ID of the one of FRAUD_CODES options.
                 Required only if you flag something as fraud.
-                See emailage.Client.FRAUD_CODES for the list of available reasons and their IDs.
+
+        .. seealso:: `emailage.client.EmailageClient.FRAUD_CODES` for the list of available reasons and their IDs.
         """
     
         flags = ['fraud', 'neutral', 'good']
         if flag not in flags:
-            raise ValueError("flag must be one of {}. {} is given.".format(', '.join(flags), flag))
+            raise ValueError(validation.Messages.FLAG_NOT_ALLOWED_FORMAT.format(', '.join(flags), flag))
 
         validation.assert_email(query)
         
@@ -157,7 +175,10 @@ class EmailageClient:
         if flag == 'fraud':
             codes = self.FRAUD_CODES
             if type(fraud_code) is not int:
-                raise ValueError("fraud_code must be an integer from 1 to {} corresponding to {}. {} is given.".format(len(codes), ', '.join(codes.values()), fraud_code))
+                raise ValueError(
+                    validation.Messages.FRAUD_CODE_RANGE_FORMAT.format(
+                        len(codes), ', '.join(codes.values()), fraud_code)
+                )
             if fraud_code not in range(1, len(codes) + 1):
                 fraud_code = 9
             params['fraudcodeID'] = fraud_code
@@ -171,7 +192,7 @@ class EmailageClient:
             query      (str): Email to be flagged.
             fraud_code (int): Reason why the email is considered fraud. ID of the one of FRAUD_CODES options.
                 Required only if you flag something as fraud.
-                See emailage.client.EmailageClient.FRAUD_CODES for the list of available reasons and their IDs.
+                See `emailage.client.EmailageClient.FRAUD_CODES` for the list of available reasons and their IDs.
         """
         return self.flag('fraud', query, fraud_code)
     
