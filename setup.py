@@ -10,7 +10,7 @@ try:
     README = open("README.rst").read()
     CHANGES = open("CHANGES.rst").read()
 except IOError:
-    DESCRIPTION = "<placeholder>"
+    DESCRIPTION = "The Emailage (TM) API is organized around REST (Representational State Transfer). The API was built to help companies integrate with our highly efficient fraud risk and scoring system. By calling our API endpoints and simply passing us an email and/or IP Address, companies will be provided with real-time risk scoring assessments based around machine learning and proprietary algorithms that evolve with new fraud trends."
 else:
     DESCRIPTION = README + '\n' + CHANGES
 
@@ -20,8 +20,8 @@ setuptools.setup(
 
     description="Official Emailage API client written in Python",
     url='https://www.emailage.com/',
-    author='Emailage Dev Tean',  # TODO: Verify - GST
-    author_email='dev@emailage.com',  # TODO: Verify - GST
+    author='Emailage Dev Team',
+    author_email='dev@emailage.com',
 
     packages=setuptools.find_packages(),
 
@@ -30,7 +30,6 @@ setuptools.setup(
     long_description=(DESCRIPTION),
     license='MIT',
     classifiers=[
-        # TODO: update this list to match your application: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
