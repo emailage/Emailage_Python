@@ -101,4 +101,4 @@ arguments passed
     emailage.flag('neutral', 'test@example.com')
     emaila
 
-.. |alt text| image:: https://emailage.com/Content/Images/logo.svg
+.. |alt text| image:: https://www.emailage.com/wp-content/uploads/2018/01/logo-dark.svg
