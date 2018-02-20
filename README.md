@@ -1,4 +1,4 @@
-[logo]: https://emailage.com/Content/Images/logo.svg "Emailage Logo"
+[logo]: https://www.emailage.com/wp-content/uploads/2018/01/logo-dark.svg "Emailage Logo"
 
 ![alt text][logo](https://www.emailage.com)
 
