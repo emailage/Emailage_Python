@@ -1,5 +1,4 @@
 import json
-import re
 import ssl
 import urllib
 
@@ -10,12 +9,12 @@ from requests.packages.urllib3.poolmanager import PoolManager
 
 from emailage import signature, validation
 
-use_parse_quote = hasattr(urllib, 'quote')
+use_parse_quote = not hasattr(urllib, 'quote')
 
 if use_parse_quote:
-    _quote_func = urllib.quote
-else:
     _quote_func = urllib.parse.quote
+else:
+    _quote_func = urllib.quote
 
 
 class TlsVersions:
@@ -153,9 +152,8 @@ class EmailageClient:
 
         res = self.session.get(url, params=params_qs)
       
-        # Remove any non-JSON-compliant characters from beginning of the response payload
-        # Example: Byte Order Mark (BOM)
-        json_data = re.sub(r'^[^{]+', '', res.text)
+        # Explicit encoding is necessary because the API returns a Byte Order Mark at the beginning of the contents
+        json_data = res.content.decode(encoding='utf_8_sig')
         return json.loads(json_data)
 
     def query(self, query, **params):

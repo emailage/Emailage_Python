@@ -11,7 +11,8 @@ class ClientTest(unittest.TestCase):
 
     def setUp(self):
         response = Mock()
-        response.text = '\xEF\xBB\xBF{"success":[true]}'
+        response.content = b'\xEF\xBB\xBF{"success":[true]}'
+        response.text = str(response.content)
         
         self.email = 'test+emailage@example.com'
         self.ip = '1.234.56.7'

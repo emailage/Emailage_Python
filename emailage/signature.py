@@ -9,12 +9,12 @@ from hashlib import sha1
 from six import b
 from uuid import uuid4
 
-use_parse_quote = hasattr(urllib, 'quote')
+use_parse_quote = not hasattr(urllib, 'quote')
 
 if use_parse_quote:
-    _quote_func = urllib.quote
-else:
     _quote_func = urllib.parse.quote
+else:
+    _quote_func = urllib.quote
 
 
 def _quote(obj):
