@@ -58,6 +58,7 @@ def add_oauth_entries_to_fields_dict(secret, params, nonce=None, timestamp=None)
 
         :Example:
 
+        >>> from emailage.signature import add_oauth_entries_to_fields_dict
         >>> query_params = dict(user_email='registered.account.user@yourcompany.com',\
             query='email.you.are.interested.in@gmail.com'\
         )
@@ -91,6 +92,7 @@ def create(method, url, params, hmac_key):
         :param params: user-provided query string parameters and the OAuth1.0 parameters
             :method add_oauth_entries_to_fields_dict:
         :param hmac_key: for Emailage users, this is your consumer token with an '&' (ampersand) appended to the end
+
         :return: str value used for oauth_signature
 
         :type method: str
@@ -99,12 +101,15 @@ def create(method, url, params, hmac_key):
         :type hmac_key: str
 
         :Example:
+
+        >>> from emailage.signature import add_oauth_entries_to_fields_dict, create
         >>> your_api_key = 'SOME_KEY'
         >>> your_hmac_key = 'SOME_SECRET' + '&'
         >>> api_url = 'https://sandbox.emailage.com/emailagevalidator/'
         >>> query_params = { 'query': 'user.you.are.validating@gmail.com', 'user_email': 'admin@yourcompany.com' }
         >>> query_params = add_oauth_entries_to_fields_dict(your_api_key, query_params)
         >>> query_params['oauth_signature'] = create('GET', api_url, query_params, your_hmac_key)
+
     """
 
     query = normalize_query_parameters(params)

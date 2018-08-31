@@ -22,6 +22,8 @@ Icon*
 /*.html
 /*.rst
 /docs/*.png
+/docs/_build
+/docs/_build/*
 
 # Google Drive
 *.gdoc
