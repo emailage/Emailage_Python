@@ -1,5 +1,9 @@
 # Revision History
 
+## 1.0.3 (6 September 2018)
+
+- parameter encoding
+
 ## 1.0.2 (30 October 2017)
 
  - Corrected the validation of IPv4 and IPv6 IP addresses
