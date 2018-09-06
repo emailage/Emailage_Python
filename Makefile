@@ -179,8 +179,8 @@ $(DOCS_FLAG): README.rst CHANGES.rst
 uml: depends-doc docs/*.png
 docs/*.png: $(SOURCES)
 	$(PYREVERSE) $(PACKAGE) -p $(PROJECT) -a 1 -f ALL -o png --ignore test
-	- mv -f classes_$(PACKAGE).png docs/classes.png
-	- mv -f packages_$(PACKAGE).png docs/packages.png
+	- mv -f classes_$(PROJECT).png docs/classes.png
+	- mv -f packages_$(PROJECT).png docs/packages.png
 
 .PHONY: apidocs
 apidocs: depends-doc apidocs/$(PACKAGE)/index.html
