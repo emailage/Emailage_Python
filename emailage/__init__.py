@@ -5,6 +5,7 @@ import sys
 __project__ = 'emailage-official'
 __version__ = '1.1.0'
 
+
 VERSION = "{0} v{1}".format(__project__, __version__)
 
 PYTHON_VERSION = 2, 7
