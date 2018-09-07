@@ -7,9 +7,9 @@ repo_url: https://github.com/emailage/Emailage_Python
 theme: mkdocs
 
 nav:
-- Home: html/index.md
+- Home: index.md
 
 - About:
-  - 'Release Notes': html/about/changes.html
-  - Contributing: html/about/contributing.html
-  - License: html/about/license.html
+  - 'Release Notes': about/changes.md
+  - Contributing: about/contributing.md
+  - License: about/license.md
