@@ -1,0 +1,535 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Quickstart guide &#8212; Emailage API Python Client 1.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p><img alt="alt text" src="https://www.emailage.com/wp-content/uploads/2018/01/logo-dark.svg" />(https://www.emailage.com)</p>
+<p>The Python-language Emailage<p>™</p>
+ API client helps companies integrate with our highly efficient fraud risk and scoring system. By calling our API endpoints and simply passing us an email and/or IP Address, companies will be provided with real-time risk scoring assessments based around machine learning and proprietary algorithms that evolve with new fraud trends.</p>
+<div class="section" id="quickstart-guide">
+<span id="quickstart-guide"></span><h1>Quickstart guide<a class="headerlink" href="#quickstart-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="requirements">
+<span id="requirements"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python 2.7+ or 3.3+</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<span id="installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The Emailage client can be installed with pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install emailage-official
+</pre></div>
+</div>
+<p>or directly from the source code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/emailage/Emailage_Python.git
+$ cd Emailage_Python
+$ python setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="typical-usage">
+<span id="typical-usage"></span><h2>Typical usage<a class="headerlink" href="#typical-usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="instantiate-a-client">
+<span id="instantiate-a-client"></span><h3>Instantiate a client<a class="headerlink" href="#instantiate-a-client" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="targeting-the-production-servers">
+<span id="targeting-the-production-servers"></span><h4>Targeting the production servers<a class="headerlink" href="#targeting-the-production-servers" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.client</span> <span class="kn">import</span> <span class="n">EmailageClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">emailage</span> <span class="o">=</span> <span class="n">EmailageClient</span><span class="p">(</span><span class="s1">&#39;My account SID&#39;</span><span class="p">,</span> <span class="s1">&#39;My auth token&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="targeting-the-sandbox-environment">
+<span id="targeting-the-sandbox-environment"></span><h4>Targeting the sandbox environment<a class="headerlink" href="#targeting-the-sandbox-environment" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.client</span> <span class="kn">import</span> <span class="n">EmailageClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">emailage</span> <span class="o">=</span> <span class="n">EmailageClient</span><span class="p">(</span><span class="s1">&#39;My account SID&#39;</span><span class="p">,</span> <span class="s1">&#39;My auth token&#39;</span><span class="p">,</span> <span class="n">sandbox</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="query-risk-score-information-for-the-provided-email-address-ip-address-or-a-combination">
+<span id="query-risk-score-information-for-the-provided-email-address-ip-address-or-a-combination"></span><h3>Query risk score information for the provided email address, IP address, or a combination<a class="headerlink" href="#query-risk-score-information-for-the-provided-email-address-ip-address-or-a-combination" title="Permalink to this headline">¶</a></h3>
+<hr class="docutils" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For an email address</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">)</span>
+<span class="c1"># For an IP address</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">)</span>
+<span class="c1"># For a combination. Please note the order</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query</span><span class="p">((</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">))</span>
+<span class="c1"># Pass a User Defined Record ID (URID).</span>
+<span class="c1"># Can be used when you want to add an identifier for a query.</span>
+<span class="c1"># The identifier will be displayed in the result.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span> <span class="n">urid</span><span class="o">=</span><span class="s1">&#39;My record ID for test@example.com&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Explicit methods produce the same request while validating format of the arguments passed</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For an email address</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query_email</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">)</span>
+<span class="c1"># For an IP address</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query_ip_address</span><span class="p">(</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">)</span>
+<span class="c1"># For a combination. Please note the order</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query_email_and_ip_address</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">)</span>
+<span class="c1"># Pass a User Defined Record ID</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">emailage</span><span class="o">.</span><span class="n">query_email_and_ip_address</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">urid</span><span class="o">=</span><span class="s1">&#39;My record ID for test@example.com and 127.0.0.1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mark-an-email-address-as-fraud-good-or-neutral">
+<span id="mark-an-email-address-as-fraud-good-or-neutral"></span><h3>Mark an email address as fraud, good, or neutral<a class="headerlink" href="#mark-an-email-address-as-fraud-good-or-neutral" title="Permalink to this headline">¶</a></h3>
+<hr class="docutils" />
+<p>You may report that you have found that an email address is good, is associated with fraud, or is neither (neutral).</p>
+<p>The call to flag an email address as fraud <em>must</em> be accompanied by one of the fraud reasons enumerated below:</p>
+<ol class="simple">
+<li>Card Not Present Fraud</li>
+<li>Customer Dispute (Chargeback)</li>
+<li>First Party Fraud</li>
+<li>First Payment Default</li>
+<li>Identify Theft (Fraud Application)</li>
+<li>Identify Theft (Account Take Over)</li>
+<li>Suspected Fraud (Not Confirmed)</li>
+<li>Synthetic ID</li>
+<li>Other</li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mark an email address as fraud because of Synthetic ID.</span>
+<span class="n">emailage</span><span class="o">.</span><span class="n">flag</span><span class="p">(</span><span class="s1">&#39;fraud&#39;</span><span class="p">,</span> <span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">emailage</span><span class="o">.</span><span class="n">flag_as_fraud</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="c1"># Mark an email address as good.</span>
+<span class="n">emailage</span><span class="o">.</span><span class="n">flag</span><span class="p">(</span><span class="s1">&#39;good&#39;</span><span class="p">,</span> <span class="s1">&#39;test@example.com&#39;</span><span class="p">)</span>
+<span class="n">emailage</span><span class="o">.</span><span class="n">flag_as_good</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">)</span>
+<span class="c1"># Unflag an email address that was previously marked as good or fraud.</span>
+<span class="n">emailage</span><span class="o">.</span><span class="n">flag</span><span class="p">(</span><span class="s1">&#39;neutral&#39;</span><span class="p">,</span> <span class="s1">&#39;test@example.com&#39;</span><span class="p">)</span>
+<span class="n">emailage</span><span class="o">.</span><span class="n">remove_flag</span><span class="p">(</span><span class="s1">&#39;test@example.com&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="exceptions">
+<span id="exceptions"></span><h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>This client can throw exceptions on any of the following issues:</p>
+<ol class="simple">
+<li>When Requests has an issue, like not being able to connect from your server to the Emailage API,</li>
+<li>When incorrectly-formatted JSON is received,</li>
+<li>When an incorrectly-formatted email or IP address is passed to a flagging or explicit querying method.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="module-client">
+<span id="client-api-reference"></span><span id="client-api-reference"></span><h1>Client API reference<a class="headerlink" href="#module-client" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="client.TlsVersions">
+<em class="property">class </em><code class="descclassname">client.</code><code class="descname">TlsVersions</code><a class="headerlink" href="#client.TlsVersions" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration of the TLS versions supported by the Emailage API</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="client.ApiDomains">
+<em class="property">class </em><code class="descclassname">client.</code><code class="descname">ApiDomains</code><a class="headerlink" href="#client.ApiDomains" title="Permalink to this definition">¶</a></dt>
+<dd><p>API URLs for the specified domains</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="client.EmailageClient">
+<em class="property">class </em><code class="descclassname">client.</code><code class="descname">EmailageClient</code><span class="sig-paren">(</span><em>secret</em>, <em>token</em>, <em>sandbox=False</em>, <em>tls_version=&lt;_SSLMethod.PROTOCOL_TLSv1_2: 5&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="client.EmailageClient.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>secret</em>, <em>token</em>, <em>sandbox=False</em>, <em>tls_version=&lt;_SSLMethod.PROTOCOL_TLSv1_2: 5&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of the EmailageClient using the specified credentials and environment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>secret</strong> (<em>str</em>) – Consumer secret, e.g. SID or API key.</li>
+<li><strong>token</strong> (<em>str</em>) – Consumer token.</li>
+<li><strong>sandbox</strong> (<em>bool</em>) – (Optional) Whether to use a sandbox instead of a production server. Uses production by default</li>
+<li><strong>tls_version</strong> (see <a class="reference internal" href="#client.TlsVersions" title="client.TlsVersions"><code class="xref py py-class docutils literal notranslate"><span class="pre">TlsVersions</span></code></a>) – (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">emailage.client</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage</span> <span class="k">import</span> <span class="n">protocols</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">EmailageClient</span><span class="p">(</span><span class="s1">&#39;consumer_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_token&#39;</span><span class="p">,</span> <span class="n">sandbox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tls_version</span><span class="o">=</span><span class="n">protocols</span><span class="o">.</span><span class="n">TLSv1_1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fraud_report</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">((</span><span class="s1">&#39;useremail@example.co.uk&#39;</span><span class="p">,</span> <span class="s1">&#39;192.168.1.1&#39;</span><span class="p">),</span> <span class="n">urid</span><span class="o">=</span><span class="s1">&#39;some_unique_identifier&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.flag_as_fraud">
+<code class="descname">flag_as_fraud</code><span class="sig-paren">(</span><em>query</em>, <em>fraud_code</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.flag_as_fraud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark an email address as fraud.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>query</strong> (<em>str</em>) – Email to be flagged</li>
+<li><strong>fraud_code</strong> (<em>int</em>) – Reason for the email to be marked as fraud; must be one of the IDs in <cite>emailage.client.EmailageClient.FRAUD_CODES</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">JSON dict of the confirmation response generated by the API</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.flag_as_good">
+<code class="descname">flag_as_good</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.flag_as_good" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark an email address as good.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>query</strong> (<em>str</em>) – Email to be flagged</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON dict of the confirmation response generated by the API</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>query</em>, <em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base query method providing support for email, IP address, and optional additional parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>query</strong> (<em>str |</em><em> (</em><em>str</em><em>, </em><em>str</em><em>)</em>) – RFC2822-compliant Email, RFC791-compliant IP, or both</li>
+<li><strong>params</strong> (<em>kwargs</em>) – keyword-argument form for parameters such as urid, first_name, last_name, etc.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">JSON dict of the response generated by the API</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.query_email">
+<code class="descname">query_email</code><span class="sig-paren">(</span><em>email</em>, <em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.query_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query a risk score information for the provided email address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>email</strong> (<em>str</em>) – RFC2822-compliant Email</li>
+<li><strong>params</strong> (<em>kwargs</em>) – (Optional) keyword-argument form for parameters such as urid, first_name, last_name, etc.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">JSON dict of the response generated by the API</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.query_email_and_ip_address">
+<code class="descname">query_email_and_ip_address</code><span class="sig-paren">(</span><em>email</em>, <em>ip</em>, <em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.query_email_and_ip_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query a risk score information for the provided combination of an Email and IP address</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>email</strong> (<em>str</em>) – RFC2822-compliant Email</li>
+<li><strong>ip</strong> (<em>str</em>) – RFC791-compliant IP</li>
+<li><strong>params</strong> (<em>kwargs</em>) – (Optional) keyword-argument form for parameters such as urid, first_name, last_name, etc.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">JSON dict of the response generated by the API</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.remove_flag">
+<code class="descname">remove_flag</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.remove_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unflag an email address that was marked as good or fraud previously.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>query</strong> (<em>str</em>) – Email to be flagged</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">JSON dict of the confirmation response generated by the API</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.request">
+<code class="descname">request</code><span class="sig-paren">(</span><em>endpoint</em>, <em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base method to generate requests for the Emailage validator and flagging APIs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>endpoint</strong> (<em>str</em>) – API endpoint to send the request ( ‘’ | ‘/flag’ )</li>
+<li><strong>params</strong> (<em>kwargs</em>) – keyword-argument list of parameters to send with the request</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">JSON dict of the response generated by the API</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.client</span> <span class="k">import</span> <span class="n">EmailageClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">EmailageClient</span><span class="p">(</span><span class="s1">&#39;consumer_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_token&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;/flag&#39;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s1">&#39;user20180830001@domain20180830001.com&#39;</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="s1">&#39;good&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">][</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+<span class="go">&#39;user20180830001%40domain20180830001.com&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.set_api_domain">
+<code class="descname">set_api_domain</code><span class="sig-paren">(</span><em>domain</em>, <em>tls_version=&lt;_SSLMethod.PROTOCOL_TLSv1_2: 5&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.set_api_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explicitly set the API domain to use for a session of the client, typically used in testing scenarios</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>domain</strong> (str see :class: <cite>ApiDomains</cite>) – API domain to use for the session</li>
+<li><strong>tls_version</strong> (see :class: <cite>TlsVersions</cite>) – (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.client</span> <span class="k">import</span> <span class="n">EmailageClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.client</span> <span class="k">import</span> <span class="n">ApiDomains</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">EmailageClient</span><span class="p">(</span><span class="s1">&#39;consumer_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_token&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">set_api_domain</span><span class="p">(</span><span class="n">ApiDomains</span><span class="o">.</span><span class="n">sandbox</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">domain</span>
+<span class="go">&#39;https://sandbox.emailage.com&#39;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.client</span> <span class="k">import</span> <span class="n">EmailageClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">EmailageClient</span><span class="p">(</span><span class="s1">&#39;consumer_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_token&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">set_api_domain</span><span class="p">(</span><span class="s1">&#39;https://testing.emailage.com&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">domain</span>
+<span class="go">&#39;https://testing.emailage.com&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="client.EmailageClient.set_credentials">
+<code class="descname">set_credentials</code><span class="sig-paren">(</span><em>secret</em>, <em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#client.EmailageClient.set_credentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explicitly set the authentication credentials to be used when generating a request in the current session.
+Useful when you want to change credentials after initial creation of the client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>secret</strong> – Consumer secret, e.g. SID or API key</li>
+<li><strong>token</strong> – Consumer token</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-signature"></span><dl class="function">
+<dt id="signature.add_oauth_entries_to_fields_dict">
+<code class="descclassname">signature.</code><code class="descname">add_oauth_entries_to_fields_dict</code><span class="sig-paren">(</span><em>secret</em>, <em>params</em>, <em>nonce=None</em>, <em>timestamp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#signature.add_oauth_entries_to_fields_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds dict entries to the user’s params dict which are required for OAuth1.0 signature generation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>secret</strong> (<em>str</em>) – API secret</li>
+<li><strong>params</strong> (<em>dict</em>) – dictionary of values which will be sent in the query</li>
+<li><strong>nonce</strong> (<em>str</em>) – (Optional) random string used in signature creation, uuid4() is used if not provided</li>
+<li><strong>timestamp</strong> (<em>int</em>) – (Optional) integer-format timestamp, time.time() is used if not provided</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict containing params and the OAuth1.0 fields required before executing signature.create</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.signature</span> <span class="k">import</span> <span class="n">add_oauth_entries_to_fields_dict</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">user_email</span><span class="o">=</span><span class="s1">&#39;registered.account.user@yourcompany.com&#39;</span><span class="p">,</span>            <span class="n">query</span><span class="o">=</span><span class="s1">&#39;email.you.are.interested.in@gmail.com&#39;</span>        <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span> <span class="o">=</span> <span class="n">add_oauth_entries_to_fields_dict</span><span class="p">(</span><span class="s1">&#39;YOUR_API_SECRET&#39;</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span><span class="p">[</span><span class="s1">&#39;oauth_consumer_key&#39;</span><span class="p">]</span>
+<span class="go">&#39;YOUR_API_SECRET&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span><span class="p">[</span><span class="s1">&#39;oauth_signature_method&#39;</span><span class="p">]</span>
+<span class="go">&#39;HMAC-SHA1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span><span class="p">[</span><span class="s1">&#39;oauth_version&#39;</span><span class="p">]</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="signature.create">
+<code class="descclassname">signature.</code><code class="descname">create</code><span class="sig-paren">(</span><em>method</em>, <em>url</em>, <em>params</em>, <em>hmac_key</em><span class="sig-paren">)</span><a class="headerlink" href="#signature.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the OAuth1.0 signature used as the value for the query string parameter ‘oauth_signature’</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>method</strong> (<em>str</em>) – HTTP method that will be used to send the request ( ‘GET’ | ‘POST’ ); EmailageClient uses GET</li>
+<li><strong>url</strong> (<em>str</em>) – API domain and endpoint up to the ?</li>
+<li><strong>params</strong> (<em>dict</em>) – user-provided query string parameters and the OAuth1.0 parameters
+:method add_oauth_entries_to_fields_dict:</li>
+<li><strong>hmac_key</strong> (<em>str</em>) – for Emailage users, this is your consumer token with an ‘&amp;’ (ampersand) appended to the end</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str value used for oauth_signature</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">emailage.signature</span> <span class="k">import</span> <span class="n">add_oauth_entries_to_fields_dict</span><span class="p">,</span> <span class="n">create</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">your_api_key</span> <span class="o">=</span> <span class="s1">&#39;SOME_KEY&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">your_hmac_key</span> <span class="o">=</span> <span class="s1">&#39;SOME_SECRET&#39;</span> <span class="o">+</span> <span class="s1">&#39;&amp;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">api_url</span> <span class="o">=</span> <span class="s1">&#39;https://sandbox.emailage.com/emailagevalidator/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;user.you.are.validating@gmail.com&#39;</span><span class="p">,</span> <span class="s1">&#39;user_email&#39;</span><span class="p">:</span> <span class="s1">&#39;admin@yourcompany.com&#39;</span> <span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span> <span class="o">=</span> <span class="n">add_oauth_entries_to_fields_dict</span><span class="p">(</span><span class="n">your_api_key</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query_params</span><span class="p">[</span><span class="s1">&#39;oauth_signature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">api_url</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="n">your_hmac_key</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Emailage API Python Client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Emailage Dev Team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/index.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

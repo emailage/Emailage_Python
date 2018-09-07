@@ -1,19 +1,8 @@
-import doctest
 import unittest
+import urllib
 from mock import Mock
-from emailage import client
 from emailage import protocols
 from emailage.client import EmailageClient
-
-
-def test_run_client_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(ClientTest())
-    suite.addTest(ClientTls11Test())
-    suite.addTest(ClientTls12Test())
-    suite.addTest(ClientTls11FlagTest())
-    suite.addTest(ClientTls12FlagTest())
-    #suite.addTests(doctest.DocTestSuite(client))
 
 
 class ClientTest(unittest.TestCase):
@@ -22,7 +11,8 @@ class ClientTest(unittest.TestCase):
 
     def setUp(self):
         response = Mock()
-        response.text = '\xEF\xBB\xBF{"success":[true]}'
+        response.content = b'\xEF\xBB\xBF{"success":[true]}'
+        response.text = str(response.content)
         
         self.email = 'test+emailage@example.com'
         self.ip = '1.234.56.7'
@@ -51,11 +41,11 @@ class ClientRequestTest(ClientTest):
         self._request()
         call_args = self.g.call_args_list[0]
         url = call_args[0][0]
-        params = call_args[1]['params']
-        
+        params = urllib.parse.parse_qs(call_args[1]['params'])
+
         self.assertEqual(url, 'https://sandbox.emailage.com/emailagevalidator/endpoint/')
-        self.assertEqual(params['query'], 'something')
-        self.assertEqual(params['oauth_consumer_key'], 'secret')
+        self.assertEqual(params['query'][0], 'something')
+        self.assertEqual(params['oauth_consumer_key'][0], 'secret')
     
     def test_request__returns(self):
         """Parses response body as JSON"""
@@ -139,3 +129,4 @@ class ClientTls12FlagTest(ClientFlagTest):
 
 if __name__ == '__main__':
     unittest.main()
+
