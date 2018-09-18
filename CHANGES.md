@@ -1,5 +1,9 @@
 # Revision History
 
+## 1.1.4 (17 August 2018)
+
+ - Corrected IPv4 validation Regex to allow 0s in octets 2,3,4
+
 ## 1.1.0 (30 August 2018)
 
  - Corrected bug in the URL encoding of spaces

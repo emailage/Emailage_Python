@@ -31,7 +31,12 @@ class ValidationTest(unittest.TestCase):
             '208.67.222.222',
             '192.168.1.155',
             '10.232.222.212',
-            '10.123.56.25'
+            '10.123.56.25',
+            '155.1.0.1',
+            '10.123.0.25',
+            '255.0.1.1',
+            '255.1.0.255',
+            '255.255.255.0',
         ]
 
         self.ipv4_samples_invalid = [
@@ -39,15 +44,43 @@ class ValidationTest(unittest.TestCase):
             '10001.fff45.222.1000:01',
             '192.168.1.1:443',
             '0.0.0.1',
-            '155.0.0.1',
+            '0.0.0.0',
+            '256.0.0.0',
+            '256.0.0.1',
+            '155.0.0.',
+            '256.0.0.',
             '256.255.255.255',
             '25.255.255.256',
+            '255.256.1.1',
             '255.255...',
             '255.255.',
             '255.255.255',
-            '255.255.255.0',
+            '255.255.255.',
+
             '255.1.255.260'
         ]
+
+    def test_validates_valid_ipv4(self):
+        failed_ips = []
+        ip_data_source = self.ipv4_samples_valid
+        for ipv4 in ip_data_source:
+            try:
+                validation.assert_ip(ipv4)
+            except ValueError as exc:
+                failed_ips.append(ipv4)
+
+        self.assertListEqual([], failed_ips)
+
+    def test_validates_invalid_ipv4(self):
+        failed_ips = []
+        ip_data_source = self.ipv4_samples_invalid
+        for ipv4 in ip_data_source:
+            try:
+                self.assertRaises(ValueError, validation.assert_ip, ipv4)
+            except Exception as exc:
+                failed_ips.append(ipv4)
+
+        self.assertListEqual([], failed_ips)
 
     def test_validates_email(self):
         validation.assert_email(self.correct_email)
@@ -58,15 +91,6 @@ class ValidationTest(unittest.TestCase):
     def test_validates_ip(self):
         for entry in self.ipv6_samples_valid:
             validation.assert_ip(entry)
-
-        for entry in self.ipv4_samples_valid:
-            validation.assert_ip(entry)
-
-        for entry in self.ipv6_samples_invalid:
-            self.assertRaises(ValueError, validation.assert_ip, entry)
-
-        for entry in self.ipv4_samples_invalid:
-            self.assertRaises(ValueError, validation.assert_ip, entry)
 
         self.assertRaises(ValueError, validation.assert_ip, self.correct_email)
         self.assertRaises(ValueError, validation.assert_ip, self.incorrect_email)
