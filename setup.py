@@ -3,7 +3,6 @@
 """Setup script for Emailage."""
 
 import setuptools
-import sys
 
 try:
     README = open("README.md").read()
