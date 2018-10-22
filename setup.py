@@ -4,8 +4,6 @@
 
 import setuptools
 
-from emailage import __project__, __version__
-
 try:
     README = open("README.md").read()
     CHANGES = open("CHANGES.md").read()
@@ -14,9 +12,12 @@ except IOError:
 else:
     DESCRIPTION = README + CHANGES
 
+PROJECT = 'emailage-official'
+VERSION = '1.1.5'
+
 setuptools.setup(
-    name=__project__,
-    version=__version__,
+    name=PROJECT,
+    version=VERSION,
 
     description="Official Emailage API client written in Python",
     url='https://www.emailage.com/',
