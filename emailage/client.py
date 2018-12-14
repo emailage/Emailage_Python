@@ -13,8 +13,11 @@ use_parse_quote = not hasattr(urllib, 'quote')
 
 if use_parse_quote:
     _quote_func = urllib.parse.quote
+    _url_encode_dict = urllib.parse.urlencode
 else:
+
     _quote_func = urllib.quote
+    _url_encode_dict = urllib.urlencode
 
 
 class TlsVersions:
