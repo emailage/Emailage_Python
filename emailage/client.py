@@ -15,7 +15,6 @@ if use_parse_quote:
     _quote_func = urllib.parse.quote
     _url_encode_dict = urllib.parse.urlencode
 else:
-
     _quote_func = urllib.quote
     _url_encode_dict = urllib.urlencode
 
@@ -159,7 +158,7 @@ class EmailageClient:
         )
         params = signature.add_oauth_entries_to_fields_dict(self.secret, params)
         params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
-        params_qs = urllib.parse.urlencode(params, quote_via=_quote_func)
+        params_qs = _url_encode_dict(params, quote_via=_quote_func)
 
         res = self.session.get(url, params=params_qs)
       
