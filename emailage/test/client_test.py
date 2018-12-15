@@ -5,6 +5,15 @@ from emailage import protocols
 from emailage.client import EmailageClient
 
 
+use_urlparse = hasattr(urllib, 'quote')
+
+if use_urlparse:
+    import urlparse
+    _parse_qs = urlparse.parse_qs
+else:
+    _parse_qs = urllib.parse.parse_qs
+
+
 class ClientTest(unittest.TestCase):
 
     _tls_version = None
@@ -16,6 +25,24 @@ class ClientTest(unittest.TestCase):
         
         self.email = 'test+emailage@example.com'
         self.ip = '1.234.56.7'
+
+        self.no_spaces_params = {
+            'first_name': 'Johann',
+            'last_name': 'Vandergrift',
+            'phone': '+14805559163'
+        }
+
+        self.spaces_params_first_name = {
+            'first_name': 'Johann Paulus',
+            'last_name': 'Vandergrift',
+            'phone': '+14805559163'
+        }
+
+        self.spaces_params_last_name = {
+            'first_name': 'Johann',
+            'last_name': 'van der Grift',
+            'phone': '+14805559163'
+        }
 
         if self._tls_version is not None:
             self.subj = EmailageClient('secret', 'token', sandbox=True, tls_version=self._tls_version)
@@ -41,7 +68,7 @@ class ClientRequestTest(ClientTest):
         self._request()
         call_args = self.g.call_args_list[0]
         url = call_args[0][0]
-        params = urllib.parse.parse_qs(call_args[1]['params'])
+        params = _parse_qs(call_args[1]['params'])
 
         self.assertEqual(url, 'https://sandbox.emailage.com/emailagevalidator/endpoint/')
         self.assertEqual(params['query'][0], 'something')

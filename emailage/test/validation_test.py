@@ -95,3 +95,6 @@ class ValidationTest(unittest.TestCase):
         self.assertRaises(ValueError, validation.assert_ip, self.correct_email)
         self.assertRaises(ValueError, validation.assert_ip, self.incorrect_email)
 
+
+if __name__ == '__main__':
+    unittest.main()
