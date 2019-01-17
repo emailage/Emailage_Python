@@ -6,15 +6,18 @@ from requests import Session
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
 
-
 from emailage import signature, validation
+
 
 use_parse_quote = not hasattr(urllib, 'quote')
 
 if use_parse_quote:
-    _quote_func = urllib.parse.quote
+    def _url_encode_dict(qs_dict):
+        return urllib.parse.urlencode(qs_dict, quote_via=urllib.parse.quote)
 else:
-    _quote_func = urllib.quote
+    def _url_encode_dict(qs_dict):
+        return '&'.join(map(lambda pair: '='.join([urllib.quote(str(pair[0]), ''), urllib.quote(str(pair[1]), '')]),
+                            sorted(qs_dict.items())))
 
 
 class TlsVersions:
@@ -146,7 +149,7 @@ class EmailageClient:
             >>> client = EmailageClient('consumer_secret', 'consumer_token')
             >>> response = client.request('/flag', email='user20180830001@domain20180830001.com', flag='good')
             >>> response['query']['email']
-            'user20180830001%40domain20180830001.com'
+            u'user20180830001%40domain20180830001.com'
         """
         url = self.domain + '/emailagevalidator' + endpoint + '/'
 
@@ -156,7 +159,7 @@ class EmailageClient:
         )
         params = signature.add_oauth_entries_to_fields_dict(self.secret, params)
         params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
-        params_qs = urllib.parse.urlencode(params, quote_via=_quote_func)
+        params_qs = _url_encode_dict(params)
 
         res = self.session.get(url, params=params_qs)
       

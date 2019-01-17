@@ -1,6 +1,11 @@
 # Revision History
 
-## 1.1.4 (17 August 2018)
+## 1.1.6 (14 December 2018)
+
+ - Fix choice of URL encoding function for Python 2.7 users
+
+
+## 1.1.4 (17 September 2018)
 
  - Corrected IPv4 validation Regex to allow 0s in octets 2,3,4
 

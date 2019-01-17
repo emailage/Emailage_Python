@@ -1,7 +1,17 @@
-import unittest
 import os
+import urllib
+import unittest
+
 from emailage.client import ApiDomains
 from emailage.client import EmailageClient
+
+use_urlparse = hasattr(urllib, 'quote')
+
+if use_urlparse:
+    import urlparse
+    _parse_qs = urlparse.parse_qs
+else:
+    _parse_qs = urllib.parse.parse_qs
 
 
 class IntegrationTest(unittest.TestCase):
@@ -9,6 +19,10 @@ class IntegrationTest(unittest.TestCase):
     def setUp(self):
         self.api_secret = os.getenv('ENV_SECRET') or 'TEST_SECRET'
         self.api_token = os.getenv('ENV_TOKEN') or 'TEST_TOKEN'
+
+        if self.api_secret == 'TEST_SECRET' and self.api_token == 'TEST_TOKEN':
+            raise AssertionError("Ensure you have set valid login credentials in your environment")
+
         self.api_domain = os.getenv('ENV_DOMAIN') or ApiDomains.sandbox
         self.api_user_email = os.getenv('ENV_USER_EMAIL') or 'user.name@emailage.com'
 
@@ -136,3 +150,7 @@ class IntegrationTest(unittest.TestCase):
         self.assertIsNotNone(response)
         self.assertDictEqual(response['responseStatus'], self.responseStatusSuccess)
         self.assertEqual(response['query']['email'], self.test_query_email + '+' + self.test_query_ip)
+
+
+if __name__ == '__main__':
+    unittest.main()
