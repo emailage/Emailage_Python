@@ -1,5 +1,6 @@
 import json
 import ssl
+import sys
 import urllib
 
 from requests import Session
@@ -9,14 +10,21 @@ from requests.packages.urllib3.poolmanager import PoolManager
 from emailage import signature, validation
 
 
-use_parse_quote = not hasattr(urllib, 'quote')
+use_urllib_quote = hasattr(urllib, 'quote')
 
-if use_parse_quote:
+if use_urllib_quote:
+    def _url_encode_dict(qs_dict):
+        return '&'.join(map(lambda pair: '='.join([urllib.quote(str(pair[0]), ''), urllib.quote(str(pair[1]), '')]),
+                            sorted(qs_dict.items())))
+elif sys.version_info >= (3, 5):
+    # Python >= 3.5
     def _url_encode_dict(qs_dict):
         return urllib.parse.urlencode(qs_dict, quote_via=urllib.parse.quote)
 else:
+    # Python 3.x - 3.4
     def _url_encode_dict(qs_dict):
-        return '&'.join(map(lambda pair: '='.join([urllib.quote(str(pair[0]), ''), urllib.quote(str(pair[1]), '')]),
+        return '&'.join(map(lambda pair: '='.join([urllib.parse.quote(str(pair[0]), ''),
+                                                   urllib.parse.quote(str(pair[1]), '')]),
                             sorted(qs_dict.items())))
 
 
