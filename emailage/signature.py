@@ -6,7 +6,7 @@ import time
 import urllib
 
 from hashlib import sha1
-from six import b
+from six import b, text_type
 from uuid import uuid4
 
 use_parse_quote = not hasattr(urllib, 'quote')
@@ -18,7 +18,7 @@ else:
 
 
 def _quote(obj):
-    return _quote_func(str(obj), safe='')
+    return _quote_func(text_type(obj), safe='')
 
 
 def normalize_query_parameters(params):
@@ -28,7 +28,7 @@ def normalize_query_parameters(params):
 
 def concatenate_request_elements(method, url, query):
     """9.1.3.  Concatenate Request Elements"""
-    return '&'.join(map(_quote, [str(method).upper(), url, query]))
+    return '&'.join(map(_quote, [text_type(method).upper(), url, query]))
 
 
 def hmac_sha1(base_string, hmac_key):
@@ -86,7 +86,7 @@ def add_oauth_entries_to_fields_dict(secret, params, nonce=None, timestamp=None)
 
 def create(method, url, params, hmac_key):
     """ Generates the OAuth1.0 signature used as the value for the query string parameter 'oauth_signature'
-    
+
         :param method: HTTP method that will be used to send the request ( 'GET' | 'POST' ); EmailageClient uses GET
         :param url: API domain and endpoint up to the ?
         :param params: user-provided query string parameters and the OAuth1.0 parameters
