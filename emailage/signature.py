@@ -18,7 +18,7 @@ else:
 
 
 def _quote(obj):
-    return _quote_func(text_type(obj), safe='')
+    return _quote_func(text_type(obj).encode("utf-8"), safe='')
 
 
 def normalize_query_parameters(params):
