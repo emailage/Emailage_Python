@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """OAuth1 module written according to http://oauth.net/core/1.0/#signing_process"""
 import base64
 import hmac
