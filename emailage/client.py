@@ -3,7 +3,7 @@ import ssl
 import sys
 import urllib
 
-from six import type_text
+from six import text_type
 
 from requests import Session
 from requests.adapters import HTTPAdapter
