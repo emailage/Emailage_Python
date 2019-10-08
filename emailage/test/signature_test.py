@@ -26,20 +26,20 @@ class SignatureTest(unittest.TestCase):
         self.test_query_ip = '13.25.10.245'
 
         self.no_spaces_params = {
-            'first_name': 'Johann',
-            'last_name': 'Vandergrift',
+            'firstname': 'Johann',
+            'lastname': 'Vandergrift',
             'phone': '+14805559163'
         }
 
         self.spaces_params_first_name = {
-            'first_name': 'Johann Paulus',
+            'firstname': 'Johann Paulus',
             'last_name': 'Vandergrift',
             'phone': '+14805559163'
         }
 
         self.spaces_params_last_name = {
-            'first_name': 'Johann',
-            'last_name': 'van der Grift',
+            'firstname': 'Johann',
+            'lastname': 'van der Grift',
             'phone': '+14805559163'
         }
 
