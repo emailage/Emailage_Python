@@ -13,7 +13,7 @@ else:
     DESCRIPTION = README + CHANGES
 
 PROJECT = 'emailage-official'
-VERSION = '1.1.7'
+VERSION = '1.1.8'
 
 setuptools.setup(
     name=PROJECT,
