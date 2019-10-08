@@ -28,7 +28,7 @@ class ClientTest(unittest.TestCase):
 
         self.no_spaces_params = {
             'firstname': 'Johann',
-            'last_name': 'Vandergrift',
+            'lastname': 'Vandergrift',
             'phone': '+14805559163'
         }
 

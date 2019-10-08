@@ -33,7 +33,7 @@ class SignatureTest(unittest.TestCase):
 
         self.spaces_params_first_name = {
             'firstname': 'Johann Paulus',
-            'last_name': 'Vandergrift',
+            'lastname': 'Vandergrift',
             'phone': '+14805559163'
         }
 
