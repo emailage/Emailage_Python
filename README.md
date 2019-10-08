@@ -189,7 +189,7 @@ additional parameters
 Parameters:
 
   * **query** (_str |__ (__str__, __str__)_)  RFC2822-compliant Email, RFC791-compliant IP, or both
-  * **params** (_kwargs_)  keyword-argument form for parameters such as urid, first_name, last_name, etc.
+  * **params** (_kwargs_)  keyword-argument form for parameters such as urid, firstname, lastname, etc.
 
 Returns:
 
@@ -218,7 +218,7 @@ Query a risk score information for the provided email address.
 Parameters:
 
   * **email** (_str_)  RFC2822-compliant Email
-  * **params** (_kwargs_)  (Optional) keyword-argument form for parameters such as urid, first_name, last_name, etc.
+  * **params** (_kwargs_)  (Optional) keyword-argument form for parameters such as urid, firstname, lastname, etc.
 
 Returns:
 
@@ -239,7 +239,7 @@ Parameters:
 
   * **email** (_str_)  RFC2822-compliant Email
   * **ip** (_str_)  RFC791-compliant IP
-  * **params** (_kwargs_)  (Optional) keyword-argument form for parameters such as urid, first_name, last_name, etc.
+  * **params** (_kwargs_)  (Optional) keyword-argument form for parameters such as urid, firstname, lastname, etc.
 
 Returns:
 

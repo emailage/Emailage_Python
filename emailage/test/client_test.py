@@ -27,20 +27,20 @@ class ClientTest(unittest.TestCase):
         self.ip = '1.234.56.7'
 
         self.no_spaces_params = {
-            'first_name': 'Johann',
-            'last_name': 'Vandergrift',
+            'firstname': 'Johann',
+            'lastname': 'Vandergrift',
             'phone': '+14805559163'
         }
 
         self.spaces_params_first_name = {
-            'first_name': 'Johann Paulus',
-            'last_name': 'Vandergrift',
+            'firstname': 'Johann Paulus',
+            'lastname': 'Vandergrift',
             'phone': '+14805559163'
         }
 
         self.spaces_params_last_name = {
-            'first_name': 'Johann',
-            'last_name': 'van der Grift',
+            'firstname': 'Johann',
+            'lastname': 'van der Grift',
             'phone': '+14805559163'
         }
 
