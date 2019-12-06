@@ -66,7 +66,14 @@ class EmailageClient:
                 block=block,
                 ssl_version=self._tls_version)
 
-    def __init__(self, secret, token, sandbox=False, tls_version=TlsVersions.TLSv1_2):
+    def __init__(
+        self,
+        secret,
+        token,
+        sandbox=False,
+        tls_version=TlsVersions.TLSv1_2,
+        timeout=None
+    ):
         """ Creates an instance of the EmailageClient using the specified credentials and environment
 
             :param secret: Consumer secret, e.g. SID or API key.
@@ -74,11 +81,13 @@ class EmailageClient:
             :param sandbox:
                 (Optional) Whether to use a sandbox instead of a production server. Uses production by default
             :param tls_version: (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)
+            :param timeout: (Optional) The timeout to be used for sent requests
 
             :type secret: str
             :type token: str
             :type sandbox: bool
             :type tls_version: see :class:`TlsVersions`
+            :type timeout: float
 
             :Example:
 
@@ -89,6 +98,7 @@ class EmailageClient:
 
         """
         self.secret, self.token, self.sandbox = secret, token, sandbox
+        self.timeout = timeout
         self.hmac_key = token + '&'
         self.session = None
         self.domain = None
@@ -169,7 +179,11 @@ class EmailageClient:
         params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
         params_qs = _url_encode_dict(params)
 
-        res = self.session.get(url, params=params_qs)
+        request_params = {}
+        if self.timeout is not None:
+            request_params['timeout'] = self.timeout
+
+        res = self.session.get(url, params=params_qs, **request_params)
       
         # Explicit encoding is necessary because the API returns a Byte Order Mark at the beginning of the contents
         json_data = res.content.decode(encoding='utf_8_sig')
