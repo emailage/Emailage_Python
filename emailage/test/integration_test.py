@@ -2,8 +2,7 @@ import os
 import urllib
 import unittest
 
-from emailage.client import ApiDomains
-from emailage.client import EmailageClient
+from emailage.client import ApiDomains, EmailageClient, HttpMethods
 
 use_urlparse = hasattr(urllib, 'quote')
 
@@ -150,6 +149,37 @@ class IntegrationTest(unittest.TestCase):
         self.assertIsNotNone(response)
         self.assertDictEqual(response['responseStatus'], self.responseStatusSuccess)
         self.assertEqual(response['query']['email'], self.test_query_email + '+' + self.test_query_ip)
+
+
+class IntegrationHttpPostTest(IntegrationTest):
+
+    def setUp(self):
+        super(IntegrationHttpPostTest, self).setUp()
+        self.client_instance.set_http_method(HttpMethods.POST)
+
+    def test_cyrillic_chars_can_complete_query(self):
+
+        params = {
+            'billaddress': 'Тюменская, область, '
+                         'Тюменская Тюменска область Ханты-Мансийск, Гагарина ул.'
+                         ' Тюменскаяобласть, Ханты-Мансийск, Гагарина ул',
+            'billcity': 'Ханты-Мансийск',
+            'billcountry': 'RU',
+            'billpostal': '628012',
+            'billregion': '',
+            'firstname': 'Foobar',
+            'lastname': 'Bazbaz',
+            'phone': '9825099999',
+            'service_date': '2019-12-13T10:12:13Z'
+        }
+        test_query_tuple = ('foobar.bazbaz@mail.ru', '5.123.45.123')
+
+        response = self.client_instance.query(test_query_tuple, **params)
+
+        print(response)
+
+        self.assertIsNotNone(response)
+        self.assertDictEqual(response['responseStatus'], self.responseStatusSuccess)
 
 
 if __name__ == '__main__':
