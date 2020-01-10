@@ -49,7 +49,7 @@ class HttpMethods:
 
 
 class EmailageClient:
-
+    """ Primary proxy to the Emailage API for end-users of the package"""
     FRAUD_CODES = {
         1: 'Card Not Present Fraud',
         2: 'Customer Dispute (Chargeback)',
@@ -92,18 +92,28 @@ class EmailageClient:
                 (Optional) Whether to use a sandbox instead of a production server. Uses production by default
             :param tls_version: (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)
             :param timeout: (Optional) The timeout to be used for sent requests
+            :param http_method: (Optional) The HTTP method (GET or POST) to be used for sending requests
 
             :type secret: str
             :type token: str
             :type sandbox: bool
             :type tls_version: see :class:`TlsVersions`
             :type timeout: float
+            :type http_method: see :class:`HttpMethods`
 
             :Example:
 
             >>> from emailage.client import EmailageClient
             >>> from emailage import protocols
             >>> client = EmailageClient('consumer_secret', 'consumer_token', sandbox=True, tls_version=protocols.TLSv1_1)
+            >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
+            
+            :Example:
+
+            >>> from emailage.client import EmailageClient
+            >>> from emailage import protocols
+            >>> client = EmailageClient('consumer_secret', 
+            ...                         'consumer_token', sandbox=True, timeout=300)
             >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
 
         """
