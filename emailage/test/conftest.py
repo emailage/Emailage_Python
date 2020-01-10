@@ -14,5 +14,3 @@ def pytest_configure(config):
             self.verbosity = 0
             self.showlongtestinfo = False
             self.showfspath = False
-
-    # terminal.TerminalReporter = QuietReporter

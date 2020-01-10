@@ -8,9 +8,11 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
 
 from emailage import signature, validation
+from emailage.signature import safety_quote
 
 
 use_urllib_quote = hasattr(urllib, 'quote')
+
 
 if use_urllib_quote:
     def _url_encode_dict(qs_dict):
@@ -40,8 +42,14 @@ class ApiDomains:
     production = 'https://api.emailage.com'
 
 
-class EmailageClient:
+class HttpMethods:
+    """HttpMethod constants to pass to the client"""
+    GET = 'GET'
+    POST = 'POST'
 
+
+class EmailageClient:
+    """ Primary proxy to the Emailage API for end-users of the package"""
     FRAUD_CODES = {
         1: 'Card Not Present Fraud',
         2: 'Customer Dispute (Chargeback)',
@@ -57,6 +65,7 @@ class EmailageClient:
     class Adapter(HTTPAdapter):
         def __init__(self, tls_version=TlsVersions.TLSv1_2):
             self._tls_version = tls_version
+            self.poolmanager = None
             super(EmailageClient.Adapter, self).__init__()
 
         def init_poolmanager(self, connections, maxsize, block=False):
@@ -66,7 +75,15 @@ class EmailageClient:
                 block=block,
                 ssl_version=self._tls_version)
 
-    def __init__(self, secret, token, sandbox=False, tls_version=TlsVersions.TLSv1_2):
+    def __init__(
+        self,
+        secret,
+        token,
+        sandbox=False,
+        tls_version=TlsVersions.TLSv1_2,
+        timeout=None,
+        http_method='GET'
+    ):
         """ Creates an instance of the EmailageClient using the specified credentials and environment
 
             :param secret: Consumer secret, e.g. SID or API key.
@@ -74,11 +91,15 @@ class EmailageClient:
             :param sandbox:
                 (Optional) Whether to use a sandbox instead of a production server. Uses production by default
             :param tls_version: (Optional) Uses TLS version 1.2 by default (TlsVersions.TLSv1_2 | TlsVersions.TLSv1_1)
+            :param timeout: (Optional) The timeout to be used for sent requests
+            :param http_method: (Optional) The HTTP method (GET or POST) to be used for sending requests
 
             :type secret: str
             :type token: str
             :type sandbox: bool
             :type tls_version: see :class:`TlsVersions`
+            :type timeout: float
+            :type http_method: see :class:`HttpMethods`
 
             :Example:
 
@@ -86,13 +107,23 @@ class EmailageClient:
             >>> from emailage import protocols
             >>> client = EmailageClient('consumer_secret', 'consumer_token', sandbox=True, tls_version=protocols.TLSv1_1)
             >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
+            
+            :Example:
+
+            >>> from emailage.client import EmailageClient
+            >>> from emailage import protocols
+            >>> client = EmailageClient('consumer_secret', 
+            ...                         'consumer_token', sandbox=True, timeout=300)
+            >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
 
         """
         self.secret, self.token, self.sandbox = secret, token, sandbox
+        self.timeout = timeout
         self.hmac_key = token + '&'
         self.session = None
         self.domain = None
         self.set_api_domain((sandbox and ApiDomains.sandbox or ApiDomains.production), tls_version)
+        self._http_method = http_method.upper()
 
     def set_credentials(self, secret, token):
         """ Explicitly set the authentication credentials to be used when generating a request in the current session.
@@ -140,7 +171,36 @@ class EmailageClient:
         })
         self.domain = domain
         self.session.mount(self.domain, EmailageClient.Adapter(tls_version))
-    
+
+    def set_http_method(self, http_method):
+        """ Explicitly set the Http method (GET or POST) through which you will be sending the request. This method
+            will be used for any future calls made with this instance of the client until another method is specified
+
+            :param http_method: HttpMethod to use for sending requests
+            :return: None
+
+            :type http_method: str see :class: `HttpMethods`
+
+            :Example:
+
+            >>> from emailage.client import EmailageClient, HttpMethods
+            >>> client = EmailageClient('consumer_secret', 'consumer_token')
+            >>> client.set_http_method(HttpMethods.POST)
+            >>> client.http_method
+            'POST'
+        """
+        if not http_method:
+            raise TypeError('http_method must be a string with the value GET or SET')
+
+        if not http_method.upper() == HttpMethods.GET and not http_method.upper() == HttpMethods.POST:
+            raise ValueError('http_method must be a string with the value GET or SET')
+
+        self._http_method = http_method.upper()
+
+    @property
+    def http_method(self):
+        return self._http_method
+
     def request(self, endpoint, **params):
         """ Base method to generate requests for the Emailage validator and flagging APIs
 
@@ -160,24 +220,60 @@ class EmailageClient:
             u'user20180830001%40domain20180830001.com'
         """
         url = self.domain + '/emailagevalidator' + endpoint + '/'
-
-        params = dict(
+        api_params = dict(
             format='json',
             **params
         )
-        params = signature.add_oauth_entries_to_fields_dict(self.secret, params)
-        params['oauth_signature'] = signature.create('GET', url, params, self.hmac_key)
-        params_qs = _url_encode_dict(params)
 
-        res = self.session.get(url, params=params_qs)
-      
+        request_params = {}
+        if self.timeout is not None and 'timeout':
+            request_params['timeout'] = self.timeout
+
+        if self.http_method == HttpMethods.GET:
+            response = self._perform_get_request(url, api_params, request_params)
+        else:
+            response = self._perform_post_request(url, api_params, request_params)
+
+        if not response:
+            raise ValueError('No response received for request')
+
         # Explicit encoding is necessary because the API returns a Byte Order Mark at the beginning of the contents
-        json_data = res.content.decode(encoding='utf_8_sig')
+        json_data = response.content.decode(encoding='utf_8_sig')
         return json.loads(json_data)
+
+    def _perform_get_request(self, url, api_params, request_params=None):
+
+        api_params = signature.add_oauth_entries_to_fields_dict(self.secret, api_params)
+        api_params['oauth_signature'] = signature.create(HttpMethods.GET, url, api_params, self.hmac_key)
+
+        params_qs = _url_encode_dict(api_params)
+        request_params = request_params or {}
+
+        res = self.session.get(url, params=params_qs, **request_params)
+        return res
+
+    def _perform_post_request(self, url, api_params, request_params=None):
+        signature_fields = dict(format='json')
+
+        signature_fields = signature.add_oauth_entries_to_fields_dict(self.secret, signature_fields)
+
+        signature_fields['oauth_signature'] = signature.create(HttpMethods.POST, url, signature_fields, self.hmac_key)
+        url = url + '?' + _url_encode_dict(signature_fields)
+
+        payload = bytes(self._assemble_quoted_pairs(api_params), encoding='utf_8')
+
+        res = self.session.post(url, data=payload, **request_params)
+        return res
+
+    @staticmethod
+    def _assemble_quoted_pairs(kv_pairs):
+        return '&'.join(map(lambda pair: '='.join([safety_quote(pair[0]),
+                                                   safety_quote(pair[1])]),
+                            sorted(kv_pairs.items())))
 
     def query(self, query, **params):
         """ Base query method providing support for email, IP address, and optional additional parameters
-        
+
             :param query: RFC2822-compliant Email, RFC791-compliant IP, or both
             :param params: keyword-argument form for parameters such as urid, first_name, last_name, etc.
             :return: JSON dict of the response generated by the API
@@ -205,7 +301,7 @@ class EmailageClient:
             query = '+'.join(query)
         params['query'] = query
         return self.request('', **params)
-    
+
     def query_email(self, email, **params):
         """Query a risk score information for the provided email address.
 
@@ -225,7 +321,7 @@ class EmailageClient:
         """
         validation.assert_email(email)
         return self.query(email, **params)
-    
+
     def query_ip_address(self, ip, **params):
         """Query a risk score information for the provided IP address.
 
@@ -244,7 +340,7 @@ class EmailageClient:
         """
         validation.assert_ip(ip)
         return self.query(ip, **params)
-    
+
     def query_email_and_ip_address(self, email, ip, **params):
         """Query a risk score information for the provided combination of an Email and IP address
 
@@ -262,7 +358,13 @@ class EmailageClient:
             >>> from emailage.client import EmailageClient
             >>> client = EmailageClient('My account SID', 'My auth token', sandbox=True)
             >>> response_json = client.query_email_and_ip_address('test@example.com', '209.85.220.41')
-            >>> response_json = client.query_email_and_ip_address('test@example.com', '209.85.220.41', urid='My record ID for test@example.com and 209.85.220.41')
+
+            :Example:
+
+            >>> from emailage.client import EmailageClient
+            >>> client = EmailageClient('My account SID', 'My auth token', sandbox=True)
+            >>> response_json = client.query_email_and_ip_address('test@example.com', '209.85.220.41',
+            ...     urid='My record ID for test@example.com and 209.85.220.41')
 
         """
         validation.assert_email(email)
@@ -297,7 +399,7 @@ class EmailageClient:
             raise ValueError(validation.Messages.FLAG_NOT_ALLOWED_FORMAT.format(', '.join(flags), flag))
 
         validation.assert_email(query)
-        
+
         params = dict(flag=flag, query=query)
 
         if flag == 'fraud':
@@ -312,7 +414,7 @@ class EmailageClient:
             params['fraudcodeID'] = fraud_code
 
         return self.request('/flag', **params)
-    
+
     def flag_as_fraud(self, query, fraud_code):
         """Mark an email address as fraud.
 
@@ -331,7 +433,7 @@ class EmailageClient:
 
         """
         return self.flag('fraud', query, fraud_code)
-    
+
     def flag_as_good(self, query):
         """Mark an email address as good.
 
@@ -348,7 +450,7 @@ class EmailageClient:
 
         """
         return self.flag('good', query)
-    
+
     def remove_flag(self, query):
         """Unflag an email address that was marked as good or fraud previously.
 
@@ -365,6 +467,3 @@ class EmailageClient:
 
         """
         return self.flag('neutral', query)
-
-
-

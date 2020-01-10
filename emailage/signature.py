@@ -17,6 +17,10 @@ else:
     _quote_func = urllib.quote
 
 
+def safety_quote(value):
+    return _quote_func(str(value), safe='')
+
+
 def _quote(obj):
     return _quote_func(str(obj), safe='')
 
@@ -86,8 +90,8 @@ def add_oauth_entries_to_fields_dict(secret, params, nonce=None, timestamp=None)
 
 def create(method, url, params, hmac_key):
     """ Generates the OAuth1.0 signature used as the value for the query string parameter 'oauth_signature'
-    
-        :param method: HTTP method that will be used to send the request ( 'GET' | 'POST' ); EmailageClient uses GET
+
+        :param method: HTTP method that will be used to send the request ( 'GET' | 'POST' )
         :param url: API domain and endpoint up to the ?
         :param params: user-provided query string parameters and the OAuth1.0 parameters
             :method add_oauth_entries_to_fields_dict:
