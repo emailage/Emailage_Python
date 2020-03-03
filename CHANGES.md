@@ -1,5 +1,9 @@
 # Revision History
 
+## 1.2.1 (3 March 2020)
+
+- Remove mock dependency from requirements.txt
+
 ## 1.2.0 (10 January 2020)
 
 - HTTP verb for requests is a parameter to `__init__`, defaults to GET
