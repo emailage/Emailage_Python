@@ -1,5 +1,9 @@
 # Revision History
 
+## 1.2.2 (11 March 2020)
+
+- Fix POST requests for Python 2.7 users
+
 ## 1.2.1 (3 March 2020)
 
 - Remove mock dependency from requirements.txt

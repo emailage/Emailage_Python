@@ -105,7 +105,7 @@ class EmailageClient:
 
             >>> from emailage.client import EmailageClient
             >>> from emailage import protocols
-            >>> client = EmailageClient('consumer_secret', 'consumer_token', sandbox=True, tls_version=protocols.TLSv1_1)
+            >>> client = EmailageClient('consumer_secret', 'consumer_token', sandbox=True, tls_version=TlsVersions.TLSv1_2)
             >>> fraud_report = client.query(('useremail@example.co.uk', '192.168.1.1'), urid='some_unique_identifier')
             
             :Example:
@@ -217,7 +217,7 @@ class EmailageClient:
             >>> client = EmailageClient('consumer_secret', 'consumer_token')
             >>> response = client.request('/flag', email='user20180830001@domain20180830001.com', flag='good')
             >>> response['query']['email']
-            u'user20180830001%40domain20180830001.com'
+            'user20180830001%40domain20180830001.com'
         """
         url = self.domain + '/emailagevalidator' + endpoint + '/'
         api_params = dict(

@@ -44,6 +44,7 @@ class RequestsSessionMockup:
         # content_bytes = list(self.BYTE_ORDER_MARK)
         # for string_byte in bytearray(response_json_content, encoding='utf_8'):
         #     content_bytes.append(string_byte)
+        response_mock.text = response_json_content
         response_mock.content = response_json_content.encode(encoding='utf_8_sig')
         return response_mock
 
