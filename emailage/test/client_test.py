@@ -1,6 +1,7 @@
 import unittest
 import urllib
 import requests
+import json
 from mock import Mock
 from emailage import protocols
 from emailage.client import EmailageClient, HttpMethods
@@ -16,8 +17,7 @@ else:
 
 
 class RequestsSessionMockup:
-    BYTE_ORDER_MARK = [0xEF, 0xBB, 0xBF]
-
+    # BYTE_ORDER_MARK = [0xEF, 0xBB, 0xBF]
     def __init__(self):
         self._mock_obj = Mock(spec=requests.Session)
 
@@ -41,13 +41,11 @@ class RequestsSessionMockup:
 
     def get_response_mock(self, response_json_content):
         response_mock = Mock(spec=requests.Response)
-        content_bytes = list(self.BYTE_ORDER_MARK)
-
-        for string_byte in bytearray(response_json_content, encoding='utf_8'):
-            content_bytes.append(string_byte)
-
-        response_mock.content = bytes(content_bytes)
-        response_mock.text = str(response_mock.content)
+        # content_bytes = list(self.BYTE_ORDER_MARK)
+        # for string_byte in bytearray(response_json_content, encoding='utf_8'):
+        #     content_bytes.append(string_byte)
+        response_mock.text = response_json_content
+        response_mock.content = response_json_content.encode(encoding='utf_8_sig')
         return response_mock
 
 
