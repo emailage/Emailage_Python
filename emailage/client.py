@@ -260,7 +260,7 @@ class EmailageClient:
         signature_fields['oauth_signature'] = signature.create(HttpMethods.POST, url, signature_fields, self.hmac_key)
         url = url + '?' + _url_encode_dict(signature_fields)
 
-        payload = bytes(self._assemble_quoted_pairs(api_params), encoding='utf_8')
+        payload = self._assemble_quoted_pairs(api_params).encode('utf_8')
 
         res = self.session.post(url, data=payload, **request_params)
         return res
