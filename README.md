@@ -6,7 +6,9 @@
 >
 > **➡ [https://github.com/lexisnexis-risk-solutions/emailage-public-clients/tree/main/Emailage_Python](https://github.com/lexisnexis-risk-solutions/emailage-public-clients/tree/main/Emailage_Python)**
 >
-> No further updates will be made to this repository.![alt text](https://www.emailage.com/wp-content/uploads/2018/01/logo-
+> No further updates will be made to this repository.
+
+![alt text](https://www.emailage.com/wp-content/uploads/2018/01/logo-
 dark.svg)(https://www.emailage.com)
 
 The Python-language Emailage API client helps companies integrate with our
